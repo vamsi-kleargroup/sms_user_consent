@@ -22,6 +22,7 @@ import io.flutter.plugin.common.MethodChannel.Result
 class SmsUserConsentPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private lateinit var channel: MethodChannel
     private lateinit var mActivity: Activity
+    private var smsVerificationReceiverRegistered = false;
 
     companion object {
         private const val CREDENTIAL_PICKER_REQUEST = 1
@@ -43,14 +44,15 @@ class SmsUserConsentPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 SmsRetriever.getClient(mActivity.applicationContext).startSmsUserConsent(call.argument<String>("senderPhoneNumber"))
 
                 mActivity.registerReceiver(smsVerificationReceiver, IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION))
+                smsVerificationReceiverRegistered = true;
                 result.success(null)
             }
         }
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-        if(mActivity != null){
-            print('unregistering');
+        if(mActivity != null && smsVerificationReceiverRegistered){
+            println("unregistering");
             mActivity.unregisterReceiver(smsVerificationReceiver)
         }
         channel.setMethodCallHandler(null)
@@ -74,10 +76,12 @@ class SmsUserConsentPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                         channel
                                 .invokeMethod("receivedSms", data.getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE))
                         mActivity.unregisterReceiver(smsVerificationReceiver)
+                        smsVerificationReceiverRegistered = false;
                     } else {
                         // Consent denied. User can type OTC manually.
                         channel.invokeMethod("receivedSms", null)
                         mActivity.unregisterReceiver(smsVerificationReceiver)
+                        smsVerificationReceiverRegistered = false;
                     }
                     true
                 }
