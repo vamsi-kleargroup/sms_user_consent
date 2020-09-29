@@ -47,14 +47,17 @@ class SmsUserConsentPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 smsVerificationReceiverRegistered = true;
                 result.success(null)
             }
+            "unregisterReciver" -> {
+                if(mActivity != null && smsVerificationReceiverRegistered){
+                    println("unregistering");
+                    mActivity.unregisterReceiver(smsVerificationReceiver)
+                }
+                result.success(null)
+            }
         }
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-        if(mActivity != null && smsVerificationReceiverRegistered){
-            println("unregistering");
-            mActivity.unregisterReceiver(smsVerificationReceiver)
-        }
         channel.setMethodCallHandler(null)
     }
 

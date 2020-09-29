@@ -54,6 +54,7 @@ class SmsUserConsent {
     _receivedSms = null;
     _phoneNumberListener = null;
     _smsListener = null;
+    _channel.invokeMethod('unregisterReciver');
   }
 
   /// Updates Phone number listener
