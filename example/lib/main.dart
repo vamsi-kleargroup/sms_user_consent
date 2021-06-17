@@ -74,9 +74,9 @@ class _MyAppState extends State<MyApp> {
                         // call your server for sms, then
                         // requestOtp();
 
-                        smsUserConsent.requestSms();
+                        smsUserConsent.requestSms(senderPhoneNumber: '');
 
-                        Scaffold.of(context).showSnackBar(
+                        ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('Listening for SMS...')));
                       }))
             ])));
