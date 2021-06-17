@@ -78,6 +78,6 @@ class SmsUserConsent {
   ///
   /// Once a sms is received, you will have to call this method again to receive
   /// another sms.
-  void requestSms({required String senderPhoneNumber}) async => await _channel
+  void requestSms({String? senderPhoneNumber}) async => await _channel
       .invokeMethod('requestSms', {"senderPhoneNumber": senderPhoneNumber});
 }
